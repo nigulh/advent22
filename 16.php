@@ -34,10 +34,18 @@ class Solution
     }
     $this->nameToBit = array_flip($this->bits);
     $this->nameToKey = array_flip(array_keys($this->tunnels));
-    $dp = $this->dp(0, "AA", 10, "AA");
+    $total = (1 << count($this->nameToBit)) - 1;
+    $ret = 0;
+    for($me = 0; $me < $total; $me++)
+    {
+      if ($me % 100 == 0) var_dump($me);
+      $dp1 = $this->dp($me, "AA", 26, "AA");
+      $dp2 = $this->dp($total - $me, "AA", 26, "AA");
+      $ret = max($ret, $dp1 + $dp2);
+    }
     var_dump(memory_get_usage());
     var_dump([count($this->map), count($this->map2)]);
-    return $dp;
+    return $ret;
   }
 
   function getKey($opened, $where, $timeLeft, $elephant)
@@ -72,7 +80,7 @@ class Solution
   public $map2 = [];
   function dp2($opened, $where, $timeLeft, $elephant)
   {
-    //return $this->dp($opened, $where, $timeLeft - 1, $elephant);
+    return $this->dp($opened, $where, $timeLeft - 1, $elephant);
     $ret = &$this->map2[$this->getKey($opened, $where, $timeLeft, $elephant)];
     if (!isset($ret))
     {
